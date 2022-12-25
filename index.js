@@ -10,17 +10,17 @@ require('./connection/mongo')
 const fileUpload = require("express-fileupload")
 app.use(fileUpload({useTempFiles : true}))
 
+
+const {verifyAccessToken} = require("./helper/jwt_helper")
 const userRoutes = require("./routes/userRoutes")
 const categoryRoutes = require("./routes/category")
 const shopTypeRoutes = require("./routes/shopType")
 const productRoutes = require("./routes/product")
 
 app.use("/api/user", userRoutes)
-app.use('/api/category', categoryRoutes )
-app.use("/api/shopType", shopTypeRoutes)
+app.use('/api/category', verifyAccessToken, categoryRoutes )
+app.use("/api/shopType",verifyAccessToken, shopTypeRoutes)
 app.use("/api/product", productRoutes )
-
-
 
 // const {COUNTRIES_DATA }= require("./data/countriesData.Js");
 // // console.log("Big DATA..", COUNTRIES_DATA.length)
@@ -34,8 +34,5 @@ app.use("/api/product", productRoutes )
 //     }
 // })
 
-
-
 const port = 8000
 app.listen(port, ()=>{ console.log("Listening to port 8000")})
-

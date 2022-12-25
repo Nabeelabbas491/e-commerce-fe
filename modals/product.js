@@ -1,3 +1,4 @@
+const { number } = require('joi')
 const mongoose = require('mongoose')
 
 const productSchema = mongoose.Schema({
@@ -6,18 +7,22 @@ const productSchema = mongoose.Schema({
         required : true
     },
     productDescription: {
-        type:String
+        type:String,
+        default : null
     },
-    color : {
-        type:String
-    },
-    size : {
+    color : [{
+        type:String,
+        default : null
+    }],
+    size : [{
        type : String,
-       enum : ['sm', "md", "lg", "xl", 'xxl', 'xxxl' ]
-    },
+    //    enum : ['xs','sm', "md", "lg", "xl", 'xxl', 'xxxl' ]
+    }],
     images : [{
-        type : Buffer,            // fileType ...  GridFS is used if file size exceeds 16MB below 16MB use Buffer  
-        required : true
+    //     type : Buffer,            // fileType ...  GridFS is used if file size exceeds 16MB below 16MB use Buffer  
+    //     re[quired : true
+    type : Object,
+    required: true
     }],
     price : {
         type : String,
@@ -25,11 +30,21 @@ const productSchema = mongoose.Schema({
     },
     categpry : {
         type : mongoose.Types.ObjectId,
+        ref : "Category",
         required : true
     },
     shopType: {
         type : mongoose.Types.ObjectId,
+        ref : "ShopType",
         required : true
+    },
+    quantity:{
+        type : Number,
+        required : true
+    },
+    weight : {
+        type : String,
+        default : null
     }
 },{
     timestamps : true,
@@ -41,4 +56,4 @@ const Product = mongoose.model("Product", productSchema)
 
 Product.init().then(()=>{})
 
-exports.module = { Product }
+module.exports = { Product }

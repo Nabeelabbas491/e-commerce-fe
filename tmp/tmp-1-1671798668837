@@ -1,0 +1,9 @@
+Property Name,Address,City,State,Zipcode,Property Type
+1st St,"820 1st St, NE",DC,DC,20001,Office
+999 North Capitol ,"999 North Capitol, NE",DC,DC,20002,Office
+15th Street,"875 15th Street, NW",DC,DC,20005,Office
+K Street,"2900 K Street, NW",DC,DC,20007,Office
+L�����,"370 L'Enfant Plaza, SW",DC,DC,20024,Office
+L Street,"2101 L Street, NW",DC,DC,20037,Office
+1200 North Capitol,1200 North Capitol NW,DC,DC,20001,Multi-family
+M Street,130 M Street NE,DC,DC,20002,Multi-family
