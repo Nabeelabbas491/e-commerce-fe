@@ -3,13 +3,11 @@ const { authValidor } = require("../helper/validations")
 const { HTTP_STATUS_CODE } = require("../utils/messege");
 const jwt_helper = require("../helper/jwt_helper")
 const bcrypt = require("bcrypt")
-const nodemailer = require('../helper/nodemailer')
+const nodemailer = require('../helper/nodemailer');
 
 exports.register = async (req,res,next) => {
     try{
-        console.log("sswaa", authValidor)
         const validatedUser = await authValidor.validateAsync(req.body)
-          console.log("validated User", validatedUser)
         const isEmailExist = await User.findOne({ email:validatedUser.email })
         if(isEmailExist) throw "Email already exist, Please register with a new email"
 
@@ -23,7 +21,21 @@ exports.register = async (req,res,next) => {
            status: "success",
            data: user,
          });
-         await nodemailer.sendEmai()
+
+         const mailOptions = {
+            from: process.env.EMAIL,
+            to: 'nabeelabbas0220@gmail.com',
+            cc: '',
+            bcc: '',
+            subject: `Welcome to E-COMMERCE`,
+            // text: 'it works yes',
+            template : 'register',
+            context: {
+                name : user.name,
+                email : user.email
+            }
+        }
+         await nodemailer.sendEmai(mailOptions)
     }catch(e){
         if(e.isJoi){
             const errorMsg = e.details[0].message.replace(`\"${e.details[0].context.key}\"`,e.details[0].context.key)
@@ -67,5 +79,64 @@ exports.login = async (req,res, next)=> {
         console.log("error..", e.message)
         res.status(e.code).send(e.message)
     }
+}
+
+exports.forgotPassword = async (req,res,next) => {
+    try{
+        console.log("req", req.body)
+        const email = req.body.email.toLowerCase()
+        const isEmailExist = await User.find({email:email}).count()
+        if(!isEmailExist){
+            const error = new Error("Email does not exist")
+            error.code = HTTP_STATUS_CODE.BAD_REQUEST
+            throw error
+        }else{
+            const user = await User.find({email:email})
+            const mailOptions = {
+                from: process.env.EMAIL,
+                to: email,
+                subject: `E-commerce Password Reset`,
+                template : 'forgotPassword',
+                context: {
+                    name : user.name,
+                    email : user.email,
+                    link : `http://localhost:4300/pages/confirm-password?id=${user[0]._id}`
+                }
+            }
+        await nodemailer.sendEmai(mailOptions)
+        res.status(HTTP_STATUS_CODE.OK).send("Email sent to your account for password recovery")
+        }
+    }catch(e){
+        console.log("error", e)
+        if(e.code){
+            res.status(e.code).send(e.message)
+        }else{
+            res.status(HTTP_STATUS_CODE.INTERNAL_SERVER).send(e)
+        }
+    }
+}
+
+exports.resetPassword = async (req,res,next) => {
+try{
+    const user =  await User.findById(req.body.id)  
+    if(!user){
+       const error =  new Error("User does not exist.")
+       error.code = HTTP_STATUS_CODE.BAD_REQUEST
+       throw error
+    }
+       
+    const hashedPassword =  await bcrypt.hash(req.body.password,10)
+    const updateduser =  await User.findByIdAndUpdate( req.body.id, { $set : { password : hashedPassword}}) 
+    
+    if(updateduser){
+        res.status(HTTP_STATUS_CODE.OK).send("Password restored successfully!")
+    }   
+}catch(e){
+    if(e.code){
+        res.status(e.code).send(e.message)
+    }else{
+        res.status(HTTP_STATUS_CODE.INTERNAL_SERVER).send(e)
+    }
+}
 }
 
