@@ -106,7 +106,6 @@ exports.getById = async (req,res,next) =>{
 exports.delete = async (req, res, next) => {
     try{
     const validId = mongoose.Types.ObjectId.isValid(req.params.id);
-    console.log("validID", validId)
     if(!validId){
         const error = new Error(`${req.params.id} is not a valid Id`)
         error.code = HTTP_STATUS_CODE.BAD_REQUEST
