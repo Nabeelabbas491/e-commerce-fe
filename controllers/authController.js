@@ -1,5 +1,6 @@
 const { User } = require("../modals/userModel");
-const { authValidor } = require("../helper/validations")
+// const { authValidor } = require("../helper/validations")
+const validations = require("../helper/validations")
 const { HTTP_STATUS_CODE } = require("../utils/messege");
 const jwt_helper = require("../helper/jwt_helper")
 const bcrypt = require("bcrypt")
@@ -7,7 +8,7 @@ const nodemailer = require('../helper/nodemailer');
 
 exports.register = async (req,res,next) => {
     try{
-        const validatedUser = await authValidor.validateAsync(req.body)
+        const validatedUser = await validations.authValidor.validateAsync(req.body)
         const isEmailExist = await User.findOne({ email:validatedUser.email })
         if(isEmailExist) throw "Email already exist, Please register with a new email"
 
@@ -83,7 +84,6 @@ exports.login = async (req,res, next)=> {
 
 exports.forgotPassword = async (req,res,next) => {
     try{
-        console.log("req", req.body)
         const email = req.body.email.toLowerCase()
         const isEmailExist = await User.find({email:email}).count()
         if(!isEmailExist){
@@ -98,16 +98,18 @@ exports.forgotPassword = async (req,res,next) => {
                 subject: `E-commerce Password Reset`,
                 template : 'forgotPassword',
                 context: {
-                    name : user.name,
-                    email : user.email,
+                    name : user[0].name,
+                    email : user[0].email,
                     link : `http://localhost:4300/pages/confirm-password?id=${user[0]._id}`
                 }
             }
         await nodemailer.sendEmai(mailOptions)
-        res.status(HTTP_STATUS_CODE.OK).send("Email sent to your account for password recovery")
+        res.status(HTTP_STATUS_CODE.OK).send({
+            status : "sucesss",
+            message : "Email sent to your account for password recovery"
+        })
         }
     }catch(e){
-        console.log("error", e)
         if(e.code){
             res.status(e.code).send(e.message)
         }else{
@@ -129,9 +131,13 @@ try{
     const updateduser =  await User.findByIdAndUpdate( req.body.id, { $set : { password : hashedPassword}}) 
     
     if(updateduser){
-        res.status(HTTP_STATUS_CODE.OK).send("Password restored successfully!")
+        res.status(HTTP_STATUS_CODE.OK).json({
+            status : "sucesss",
+            message : "Password restored successfully"
+    })
     }   
 }catch(e){
+    console.log("e...",e)
     if(e.code){
         res.status(e.code).send(e.message)
     }else{

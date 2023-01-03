@@ -2,6 +2,11 @@ const { number } = require('joi')
 const mongoose = require('mongoose')
 
 const productSchema = mongoose.Schema({
+    user : {
+        type : mongoose.Types.ObjectId,
+        ref : 'User',
+        required : true
+    },
     productName : {
         type : String,
         required : true

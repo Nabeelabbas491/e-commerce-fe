@@ -4,7 +4,7 @@ const shopTypeController = require("../controllers/shopTypeController")
 
 Router.route("/:id")
 .get(shopTypeController.getById)
-.put(shopTypeController.update)
+.patch(shopTypeController.update)
 .delete(shopTypeController.delete)
 
 Router.get("/", shopTypeController.getAll)

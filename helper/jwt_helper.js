@@ -19,6 +19,7 @@ exports.verifyAccessToken = async (req,res,next) =>{
     try{
         const headers = req.headers['authorization'].split(" ")
         const bearerToken = headers[1]
+        console.log(bearerToken)
         const verifyToken = await jwt.verify(bearerToken, process.env.JWT_SECRET_KEY)
         console.log("verify Token..", verifyToken)
         if(verifyToken){

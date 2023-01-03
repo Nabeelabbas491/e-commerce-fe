@@ -6,6 +6,11 @@ name : {
     unique : true,
     required : 'Category name is required'
 },
+user : {
+    type : mongoose.Types.ObjectId,
+    ref : 'User',
+    required : true
+}
 },
 {
     timestamps: true,

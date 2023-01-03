@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const authValidor = Joi.object({
+exports.authValidor = Joi.object({
     name : Joi.string().required(),
     email: Joi.string().email().lowercase().required(),
     password: Joi.string().min(8).max(30).required(),
@@ -8,12 +8,12 @@ const authValidor = Joi.object({
     avatar : Joi.string().allow('', null),            // just for info , use empty('') for consistency
     address : Joi.string().empty(),           
     postalCode : Joi.string().empty(''),
-    token : Joi.string().empty('')
+    token : Joi.string().empty(''),
 })
 
-const productValidator = Joi.object({
+exports.productValidator = Joi.object({
     productName : Joi.string().required(),
-    productDescription : Joi.any(),
+    productDescription : Joi.string().required(),
     color :Joi.any(),
     size :Joi.any(),
     images : Joi.array().min(1).max(10).required(),
@@ -21,10 +21,10 @@ const productValidator = Joi.object({
     categpry : Joi.string().required(),
     shopType : Joi.string().required(),
     quantity : Joi.number().required(),
-    weight : Joi.any()
+    weight : Joi.any(),
+    id:Joi.any(),
+    user : Joi.any().required()
 })
 
-module.exports = { authValidor }
-// module.exports = { productValidator }
 
 
